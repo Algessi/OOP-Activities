@@ -1,3 +1,4 @@
+// Duran, Althea Janine - BSCS-2B
 import java.util.Scanner;
 
 public class CafeMenu{
@@ -119,7 +120,7 @@ public class CafeMenu{
             }
             
         }
-        // Calculate total cost and amount due
+        
         double totalCost = foodTotal + drinkTotal;
         System.out.println("Total Cost: " + totalCost);
         System.out.println("--------------------------");
