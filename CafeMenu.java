@@ -1,135 +1,97 @@
-// Duran, Althea Janine - BSCS-2B
 import java.util.Scanner;
 
-public class CafeMenu{
-    
-    public static Scanner input = new Scanner(System.in);
-    public static double foodTotal = 0;
-    public static double drinkTotal = 0;
-    
-    public static void main(String[] args) {
-        displayMenu();
-    }
-    
-    public static void displayMenu() {
-        System.out.println("\tFLAVORED CUP CAKES");
-        System.out.println("FLAVOR\t\tCOST");
-        System.out.println("[A]\tCHOCOLATE\t25.0");
-        System.out.println("[B]\tRAISINS\t\t50.0");
-        System.out.println("[C]\tPINEAPPLE\t40.0");
-        System.out.println("[D]\tAPPLE\t\t30.0");
-        System.out.println("[E]\tMANGO\t\t35.0");
-        System.out.println("[F]\tBANANA\t\t45.0");
-        orderFood();
-    }
-    
-    public static void orderFood() {
-        while (true) {
-            System.out.print("\nCHOOSE FLAVOR: ");
-            String flavor = input.nextLine();
-            double cost = 0;
-            switch (flavor.toUpperCase()) {
-                case "A":
-                    cost = 25.0;
-                    break;
-                case "B":
-                    cost = 50.0;
-                    break;
-                case "C":
-                    cost = 40.0;
-                    break;
-                case "D":
-                    cost = 30.0;
-                    break;
-                case "E":
-                    cost = 35.0;
-                    break;
-                case "F":
-                    cost = 45.0;
-                    break;
-                default:
-                    System.out.println("Invalid flavor.");
-                    continue;
-            }
-            System.out.print("QUANTITY: ");
-            int quantity = input.nextInt();
-            double subtotal = cost * quantity;
-            System.out.printf("SUBTOTAL: %.2f\n", subtotal);
-            foodTotal += subtotal;
-            input.nextLine(); // consume the newline character
-            System.out.print("ANOTHER [Y/N]: ");
-            String answer = input.nextLine();
-            if (answer.equalsIgnoreCase("N")) {
-                break;
-            }
-        }
-        displayDrinkMenu();
-    }
-    
-    public static void displayDrinkMenu() {
-        System.out.println("\n\tGLASS OF DRINKS");
-        System.out.println("FLAVOR\t\tCOST");
-        System.out.println("[1]\tSOFTDRINKS\t25.0");
-        System.out.println("[2]\tICED TEA\t50.0");
-        System.out.println("[3]\tCOFFEE\t\t40.0");
-        System.out.println("[4]\tAPPLE JUICE\t30.0");
-        System.out.println("[5]\tMANGO JUICE\t35.0");
-        System.out.println("[6]\tPINEAPPLE JUICE\t45.0");
-        orderDrink();
-    }
-    
-    public static void orderDrink() {
-        while (true) {
-            System.out.print("\nCHOOSE FLAVOR: ");
-            String flavor = input.nextLine();
-            double cost = 0;
-            switch (flavor) {
-                case "1":
-                    cost = 25.0;
-                    break;
-                case "2":
-                    cost = 50.0;
-                    break;
-                case "3":
-                    cost = 40.0;
-                    break;
-                case "4":
-                    cost = 30.0;
-                    break;
-                case "5":
-                    cost = 35.0;
-                    break;
-                case "6":
-                    cost = 45.0;
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please choose a valid flavor.");
-                    continue;
-            }
-            System.out.print("QUANTITY: ");
-            int quantity = input.nextInt();
-            double subtotal = cost * quantity;
-            System.out.printf("SUBTOTAL: %.2f\n", subtotal);
-            drinkTotal += subtotal;
-            input.nextLine();
-            System.out.print("ANOTHER [Y/N]: ");
-            String answer = input.nextLine();
-            if (answer.equalsIgnoreCase("N")) {
-                break;
-            
-            }
-            
-        }
-        
-        double totalCost = foodTotal + drinkTotal;
-        System.out.println("Total Cost: " + totalCost);
-        System.out.println("--------------------------");
-        System.out.println("\t SUMMARY");
-        System.out.println("FOOD: " + foodTotal);
-        System.out.println("DRINKS: " + drinkTotal);
-        System.out.println("--------------------------");
-        double amountDue = totalCost;
-        System.out.println("AMOUNT DUE: " + amountDue);
+abstract class Menu {
+    protected String[] flavor;
+    protected double[] cost;
 
+    Menu(String[] flavor, double[] cost) {
+        this.flavor = flavor;
+        this.cost = cost;
+    }
+
+    abstract String getMenuName();
+
+    void displayMenu() {
+        System.out.println("\t\t" + getMenuName() + "\nFLAVOR\t\t\t\tCOST");
+        for(int i = 0; i < flavor.length; i++) {
+            System.out.printf("[%d]\t%-20s\t%.2f\n", i+1, flavor[i], cost[i]);
+        }
+    }
+
+    double getCost(int choice, int quantity) {
+        return cost[choice-1] * quantity;
+    }
+}
+
+class CupcakeMenu extends Menu {
+    CupcakeMenu(String[] flavor, double[] cost) {
+        super(flavor, cost);
+    }
+
+    @Override
+    String getMenuName() {
+        return "FLAVORED CUP CAKES";
+    }
+}
+
+class DrinksMenu extends Menu {
+    DrinksMenu(String[] flavor, double[] cost) {
+        super(flavor, cost);
+    }
+
+    @Override
+    String getMenuName() {
+        return "GLASS OF DRINKS";
+    }
+}
+
+public class CafeMenu {
+    public static void main(String[] args) {
+        String[] cupcakeFlavor = {"CHOCOLATE", "RAISINS", "PINEAPPLE", "APPLE", "MANGO", "BANANA"};
+        double[] cupcakeCost = {25.0, 50.0, 40.0, 30.0, 35.0, 45.0};
+        CupcakeMenu cupcakeMenu = new CupcakeMenu(cupcakeFlavor, cupcakeCost);
+
+        String[] drinksFlavor =
+            {"SOFTDRINKS", "ICED TEA", "COFFEE", "APPLE JUICE", "MANGO JUICE", "PINEAPPLE JUICE"};
+        double[] drinksCost = {25.0, 50.0, 40.0, 30.0, 35.0, 45.0};
+        DrinksMenu drinksMenu = new DrinksMenu(drinksFlavor, drinksCost);
+
+        Scanner scanner = new Scanner(System.in);
+        int menuChoice;
+        int itemChoice;
+        int quantity;
+
+        while (true) {
+            System.out.println("Select Menu: \n1. Cupcake Menu\n2. Drinks Menu\n3. Exit");
+            menuChoice = scanner.nextInt();
+
+            if (menuChoice == 3) {
+                break;
+            }
+
+            if (menuChoice == 1) {
+                cupcakeMenu.displayMenu();
+            } else if (menuChoice == 2) {
+                drinksMenu.displayMenu();
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+                continue;
+            }
+
+            System.out.println("Enter your choice: ");
+            itemChoice = scanner.nextInt();
+
+            System.out.println("Enter quantity: ");
+            quantity = scanner.nextInt();
+
+            double cost = 0;
+            if (menuChoice == 1) {
+                cost = cupcakeMenu.getCost(itemChoice, quantity);
+            } else if (menuChoice == 2) {
+                cost = drinksMenu.getCost(itemChoice, quantity);
+            }
+
+            System.out.printf("Total cost: %.2f\n", cost);
+        }
     }
 }
