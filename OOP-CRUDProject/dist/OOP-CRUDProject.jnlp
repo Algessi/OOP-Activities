@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="OOP-CRUDProject.jnlp">
+  <information>
+    <title>OOP-CRUDProject</title>
+    <vendor>JEOFFREY JIMENO</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="OOP-CRUDProject.jar" size="6822" download="eager" />
+    <jar href="lib\fontawesomefx-8.2.jar" size="180341" download="eager" />
+    <jar href="lib\mysql-connector-j-8.0.33.jar" size="2481560" download="eager" />
+    <jar href="lib\ojdbc14-10.2.0.2.0.jar" size="1545954" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="800" height="600" main-class="oop.crudproject.OOPCRUDProject"  name="OOP-CRUDProject" />
+  <update check="always"/>
+</jnlp>
