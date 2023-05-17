@@ -10,7 +10,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -113,46 +118,43 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TextField signup_username;
 
+
     private Connection connect;
     private PreparedStatement prepare;
     private ResultSet result;
     private Statement statement;
-
-    public Connection connectionDB() {
+    
+    public Connection connectDB() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connect
-                    = DriverManager.getConnection("jdbc.mysql://localhost/useraccount", "root", "");
-            return connect;
+                    = DriverManager.getConnection("jdbc:mysql://localhost:3306/useraccount", "root", "");
         } catch (Exception e) {
-            e.printStackTrace();
-        }
+            e.printStackTrace();}
         return null;
     }
-
-    public void login() {
+     public void login() {
 
     }
-
-    public void register() {
+     public void register() {
 
         alertMessage alert = new alertMessage();
 
-//        CHECK IF THE FIELDS ARE EMPTY
+        // CHECK IF WE HAVE EMPTY FIELDS
         if (signup_username.getText().isEmpty() || signup_email.getText().isEmpty()
                 || signup_password.getText().isEmpty() || signup_cPassword.getText().isEmpty()
                 || signup_selectQuestion.getSelectionModel().getSelectedItem() == null
                 || signup_answer.getText().isEmpty()) {
-            alert.errorMessage("All fields are required.");
+            alert.errorMessage("All fields are necessary to be filled");
         } else if (signup_password.getText() == signup_cPassword.getText()) {
-//                CHECK IF THE PASSWORD AND CONFIRM PASSWORD IS MATCH
-            alert.errorMessage("Password does not match.");
+            // CHECK IF THE VALUE OF PASSWORD FIELDS IS EQUAL TO CONFIRM PASSWORD
+            alert.errorMessage("Password does not match");
         } else if (signup_password.getText().length() < 8) {
-//                CHECK IF THE LENGTH OF PASSWORD VALUE  IS LESS THAN TO 8
-            alert.errorMessage("Invalid password, atleast 8 characters needed.");
+            // CHECK IF THE LENGTH OF PASSWORD VALUE IS LESS THAN TO 8
+            alert.errorMessage("Invalid Password, at least 8 characters needed.");
         } else {
-//            CHECK IF THE USERNAME IS ALREADY TAKEN
-            String checkUsername = "SELECT * FROM users WHERE username ='"
+            // CHECK IF THE USERNAME IS ALREADY TAKEN
+            String checkUsername = "SELECT * FROM users WHERE username = '"
                     + signup_username.getText() + "'";
             connect = connectDB();
             try {
@@ -160,38 +162,53 @@ public class FXMLDocumentController implements Initializable {
                 result = statement.executeQuery(checkUsername);
 
                 if (result.next()) {
-                    alert.errorMessage(signup_username.getText() +"is already taken.");
+                    alert.errorMessage(signup_username.getText() + " is already taken");
                 } else {
-                    String insertData = "INSERT INTO users" + "(email, username, password, question, answer)" + "VALUES(?,?,?,?,?)";
-                    
+
+                    String insertData = "INSERT INTO users "
+                            + "(email, username, password, question, answer, date) "
+                            + "VALUES(?,?,?,?,?,?)"; // FIVE (?)
+
                     prepare = connect.prepareStatement(insertData);
                     prepare.setString(1, signup_username.getText());
                     prepare.setString(2, signup_email.getText());
                     prepare.setString(3, signup_password.getText());
-                    prepare.setString(4, 
-                            (String)signup_selectQuestion.getSelectionModel().getSelectedItem());
+                    prepare.setString(4,
+                            (String) signup_selectQuestion.getSelectionModel().getSelectedItem());
                     prepare.setString(5, signup_answer.getText());
-                    
+
+                    Date date = new Date();
+                    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+                    prepare.setString(6, String.valueOf(sqlDate));
+
                     prepare.executeUpdate();
-                    
+
                     alert.successMessage("Registered Successfully!");
-                    
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
     }
-
+        private String[] questionList = {"What is your favorite color?", "What is your favorite food?","What is your pet's name?",
+        "What is your most favorite sports?"};
+    public void questions() {
+        List<String> listQ = new ArrayList<>();
+        
+        for(String data: questionList){
+            listQ.add(data);
+        }
+        
+        ObservableList listData = FXCollections.observableArrayList(listQ);
+        signup_selectQuestion.setItems(listData);
+    } 
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+       questions();
     }
 
-    private Connection connectDB() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
     }
 
-}
